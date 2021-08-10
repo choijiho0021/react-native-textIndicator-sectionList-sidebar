@@ -23,13 +23,12 @@ DerivedData
 
 # Android/IntelliJ
 #
-/build/
+build/
 .idea
 .gradle
 local.properties
 *.iml
-# Android
-/Android
+
 # node.js
 #
 node_modules/
@@ -37,7 +36,7 @@ npm-debug.log
 yarn-error.log
 
 # BUCK
-/buck-out/
+buck-out/
 \.buckd/
 *.keystore
 !debug.keystore
@@ -57,12 +56,4 @@ yarn-error.log
 *.jsbundle
 
 # CocoaPods
-/iOS
 /ios/Pods/
-
-Develope
-dist
-/.prettierrc.js
-/.watchmanconfig
-/index.js
-/App.tsx
