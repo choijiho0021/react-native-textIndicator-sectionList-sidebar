@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   SectionList,
@@ -17,62 +17,89 @@ import {
   Text,
   View,
 } from 'react-native';
+import SectionListSidebar from './components/SectionListSidebar';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
-    marginHorizontal: 16,
+    marginHorizontal: 8,
   },
   item: {
-    backgroundColor: '#f9c2ff',
-    padding: 20,
-    marginVertical: 8,
+    padding: 3,
+    marginVertical: 4,
+    height: 20,
   },
   header: {
-    fontSize: 32,
-    backgroundColor: '#fff',
+    fontSize: 20,
+    height: 40,
   },
   title: {
-    fontSize: 24,
+    fontSize: 14,
   },
 });
 
-const DATA = [
-  {
-    title: 'Main dishes',
-    data: ['Pizza', 'Burger', 'Risotto'],
-  },
-  {
-    title: 'Sides',
-    data: ['French Fries', 'Onion Rings', 'Fried Shrimps'],
-  },
-  {
-    title: 'Drinks',
-    data: ['Water', 'Coke', 'Beer'],
-  },
-  {
-    title: 'Desserts',
-    data: ['Cheese Cake', 'Ice Cream'],
-  },
-];
+interface TestData {
+  title: string;
+  data: Array<string>;
+}
+export interface TestListItem {
+  key?: string;
+  contName: string;
+  contNo: number;
+}
 
-const Item = ({title}) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{title}</Text>
-  </View>
-);
+interface TestListData {
+  key: string;
+  title: string;
+  data: TestListItem[];
+}
 
 const App = () => {
+  const [data, setData] = useState<TestListData[]>([]);
+  const sidebarRef = useRef();
+
+  const makeData: TestListData[] = (num: number) => {
+    var newData: TestListData[] = [];
+    for (var i = 0; i < num; i++) {
+      newData.push({
+        key: i.toString(),
+        title: 'title',
+        data: [
+          {
+            key: i.toString(),
+            contName: i.toString(),
+            contNo: i,
+          },
+        ],
+      });
+    }
+    return newData;
+  };
+
+  useEffect(() => {
+    console.log('setDateWork');
+    const returnData = makeData(1200);
+    setData(returnData);
+  }, []);
+
+  const renderItem = ({item}) => {
+    console.log('renderItem : ', item);
+    return (
+      <View style={styles.item}>
+        <Text style={styles.title}>{item.contName}</Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView>
-      <SectionList
-        sections={DATA}
-        keyExtractor={(item, index) => item + index}
-        renderItem={({item}) => <Item title={item} />}
+      <SectionListSidebar
+        sections={data}
         renderSectionHeader={({section: {title}}) => (
           <Text style={styles.header}>{title}</Text>
         )}
+        renderItem={renderItem}
       />
     </SafeAreaView>
   );
