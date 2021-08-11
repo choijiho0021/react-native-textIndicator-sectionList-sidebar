@@ -10,7 +10,10 @@
 
 import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Dimensions,
   FlatList,
+  Platform,
+  Pressable,
   SafeAreaView,
   SectionList,
   StatusBar,
@@ -19,6 +22,8 @@ import {
   View,
 } from 'react-native';
 import SectionListSidebar from './components/SectionListSidebar';
+
+const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
@@ -32,11 +37,35 @@ const styles = StyleSheet.create({
     height: 20,
   },
   header: {
+    justifyContent: 'center',
     fontSize: 16,
     height: 28,
   },
   title: {
     fontSize: 14,
+  },
+
+  sidebarBtn: {
+    paddingHorizontal: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sidebarContainer: {
+    flex: 1,
+    opacity: 0.8,
+    position: 'absolute',
+    bottom: 0,
+    top: 20,
+    right: 0,
+    justifyContent: 'center',
+    height: (windowHeight * 2) / 3,
+  },
+  sidebarText: {
+    flex: 1,
+    fontSize: 10,
+    color: '#222',
+    justifyContent: 'center',
+    textAlignVertical: 'center',
   },
 });
 
@@ -74,7 +103,7 @@ const RenderItem0 = memo(RenderItem);
 
 const App = () => {
   const [data, setData] = useState<SimpleData[]>([]);
-  const sidebarRef = useRef();
+  const sidebarRef = useRef<any>();
 
   const makeData: SimpleData[] = (num: number) => {
     var newData: SimpleData[] = [];
@@ -90,20 +119,54 @@ const App = () => {
 
   useEffect(() => {
     console.log('setDateWork');
-    const returnData = makeData(1000);
+    const returnData = makeData(20);
     setData(returnData);
+  }, []);
+
+  const jumpToSection = (sectionIndex, itemIndex = 0) => {
+    console.log('jumpToSection!! : ', sectionIndex, itemIndex);
+    console.log('sectionListRef!! : ', sidebarRef);
+    try {
+      sidebarRef.current!.scrollToLocation({
+        sectionIndex,
+        itemIndex,
+      });
+    } catch (e) {}
+  };
+
+  const renderSidebarItem = useCallback(({item, index}) => {
+    return (
+      <View key={item} style={{paddingVertical: 10}}>
+        <Pressable
+          onPress={() => {
+            jumpToSection(index);
+          }}
+          style={[styles.sidebarBtn]}>
+          <Text
+            style={[
+              styles.sidebarText,
+              index % 2 === 1 && {fontSize: 5, fontWeight: '900'},
+            ]}>
+            {index % 2 ? '·' : item}
+          </Text>
+        </Pressable>
+      </View>
+    );
   }, []);
 
   return (
     <SafeAreaView>
       <SectionListSidebar
+        ref={sidebarRef}
         itemHeight={28}
         sectionHeaderHeight={28}
         stickySectionHeadersEnabled={true}
         sections={data}
-        renderSectionHeader={({section}) => {
-          return <Text style={styles.header}>{section.title}</Text>;
-        }}
+        data={data}
+        // renderSectionHeader={({section}) => {
+        //   return <Text style={styles.header}>{section.title}</Text>;
+        // }}
+        renderSidebarItem={renderSidebarItem}
         renderItem={({item}) => <RenderItem0 item={item} />}
       />
     </SafeAreaView>
