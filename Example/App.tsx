@@ -8,8 +8,9 @@
  * @format
  */
 
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {
+  FlatList,
   SafeAreaView,
   SectionList,
   StatusBar,
@@ -31,8 +32,8 @@ const styles = StyleSheet.create({
     height: 20,
   },
   header: {
-    fontSize: 20,
-    height: 40,
+    fontSize: 16,
+    height: 28,
   },
   title: {
     fontSize: 14,
@@ -46,7 +47,6 @@ interface TestData {
 export interface TestListItem {
   key?: string;
   contName: string;
-  contNo: number;
 }
 
 interface TestListData {
@@ -55,23 +55,34 @@ interface TestListData {
   data: TestListItem[];
 }
 
+interface SimpleData {
+  key: string;
+  title: string;
+  data: {content: string}[];
+}
+
+const RenderItem = ({item}) => {
+  console.log('renderItem : ', item);
+  return (
+    <View style={styles.item}>
+      <Text style={styles.title}>{item.content}</Text>
+    </View>
+  );
+};
+
+const RenderItem0 = memo(RenderItem);
+
 const App = () => {
-  const [data, setData] = useState<TestListData[]>([]);
+  const [data, setData] = useState<SimpleData[]>([]);
   const sidebarRef = useRef();
 
-  const makeData: TestListData[] = (num: number) => {
-    var newData: TestListData[] = [];
+  const makeData: SimpleData[] = (num: number) => {
+    var newData: SimpleData[] = [];
     for (var i = 0; i < num; i++) {
       newData.push({
         key: i.toString(),
         title: 'title',
-        data: [
-          {
-            key: i.toString(),
-            contName: i.toString(),
-            contNo: i,
-          },
-        ],
+        data: [{content: 'One' + 1}, {content: 'Two' + 2}],
       });
     }
     return newData;
@@ -79,27 +90,21 @@ const App = () => {
 
   useEffect(() => {
     console.log('setDateWork');
-    const returnData = makeData(1200);
+    const returnData = makeData(1000);
     setData(returnData);
   }, []);
-
-  const renderItem = ({item}) => {
-    console.log('renderItem : ', item);
-    return (
-      <View style={styles.item}>
-        <Text style={styles.title}>{item.contName}</Text>
-      </View>
-    );
-  };
 
   return (
     <SafeAreaView>
       <SectionListSidebar
+        itemHeight={28}
+        sectionHeaderHeight={28}
+        stickySectionHeadersEnabled={true}
         sections={data}
-        renderSectionHeader={({section: {title}}) => (
-          <Text style={styles.header}>{title}</Text>
-        )}
-        renderItem={renderItem}
+        renderSectionHeader={({section}) => {
+          return <Text style={styles.header}>{section.title}</Text>;
+        }}
+        renderItem={({item}) => <RenderItem0 item={item} />}
       />
     </SafeAreaView>
   );
