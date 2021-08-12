@@ -15,7 +15,6 @@ import {
   View,
   ViewProps,
 } from 'react-native';
-// import SectionListGetItemLayout from './SectionListGetItemLayout';
 import SectionListGetItemLayout from 'react-native-section-list-get-item-layout';
 import TextIndicator from './TextIndicator';
 
@@ -23,7 +22,7 @@ const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 8,
+    flex: 1,
   },
   item: {
     backgroundColor: '#f9c2ff',
@@ -31,10 +30,12 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   sectionHeaderStyle: {
-    height: 20,
+    justifyContent: 'flex-end',
+    textAlignVertical: 'center',
+    padding: 5,
+    height: 30,
     fontSize: 14,
     paddingLeft: 10,
-    justifyContent: 'center',
     backgroundColor: '#ddd',
   },
   title: {
@@ -48,12 +49,13 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: 'center',
     backgroundColor: '#ccc',
-    height: (windowHeight * 2) / 3,
     borderRadius: 50,
+    marginHorizontal: 12,
   },
   sidebarItemTextStyle: {
     flex: 1,
-    fontSize: 10,
+    fontSize: 11,
+    fontWeight: 'bold',
     color: '#222',
     justifyContent: 'center',
     textAlignVertical: 'center',
@@ -104,8 +106,8 @@ interface SectionListSidebarProps extends SectionListProps<any, any> {
 const SectionListSidebar = (
   {
     rtl = false,
-    sectionHeaderHeight = 20,
-    itemHeight = 20,
+    sectionHeaderHeight = 30,
+    itemHeight = 30,
     footerHeaderHeight = 0,
     separatorHeight = 0,
     listHeaderHeight = 0,
@@ -166,9 +168,10 @@ const SectionListSidebar = (
       return (
         <View key={item} style={{paddingVertical: 10}}>
           <TouchableOpacity
+            pressRetentionOffset={{bottom: 5, left: 5, right: 5, top: 5}}
             onPressIn={() => {
               jumpToSection(index);
-              setIndicatorText(index);
+              setIndicatorText(item);
               setIsShow(true);
             }}
             onPressOut={() => {
@@ -207,6 +210,7 @@ const SectionListSidebar = (
         <View style={[styles.sidebarItemContainerStyle, sidebarContainerStyle]}>
           <FlatList
             data={data.map(item => item.key)}
+            scrollEnabled={false}
             keyExtractor={sidebarKeyExtractor}
             renderItem={renderSidebarItem || defaultSidebarItem}
             showsVerticalScrollIndicator={false}

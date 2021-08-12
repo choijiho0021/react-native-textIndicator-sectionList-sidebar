@@ -3,7 +3,13 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "test": ""
+    "ts:build": "tsc",
+    "ts:watch": "tsc --watch",
+    "test": "jest",
+    "prepublish": "npm run ts:build"
+  },
+  "dependencies": {
+    "react-native-section-list-get-item-layout": "2.2.3"
   },
   "devDependencies": {
     "@types/react": "16.9.17",
@@ -12,6 +18,10 @@
   },
   "description": "faster section list",
   "keywords": [
+    "SectionList",
+    "sidebar",
+    "ios",
+    "android",
     "react-native"
   ],
   "author": "choijiho0021@gmail.com",

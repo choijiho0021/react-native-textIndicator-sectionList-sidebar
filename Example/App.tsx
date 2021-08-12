@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   item: {
     padding: 3,
     marginVertical: 4,
-    height: 20,
+    height: 30,
   },
   header: {
     justifyContent: 'center',
@@ -84,14 +84,14 @@ interface TestListData {
 interface SimpleData {
   key: string;
   title: string;
-  data: {content: string}[];
+  data: string[];
 }
 
 const RenderItem = ({item}) => {
   console.log('renderItem : ', item);
   return (
     <View style={styles.item}>
-      <Text style={styles.title}>{item.content}</Text>
+      <Text style={styles.title}>{item}</Text>
     </View>
   );
 };
@@ -99,7 +99,33 @@ const RenderItem = ({item}) => {
 const RenderItem0 = memo(RenderItem);
 
 const App = () => {
-  const [data, setData] = useState<SimpleData[]>([]);
+  const [data, setData] = useState<SimpleData[]>([
+    {key: 'A', title: 'start A', data: ['Amy', 'Ari', 'Abundon']},
+    {key: 'B', title: 'start B', data: ['BY', 'Briri', 'BatMan']},
+    {key: 'C', title: 'start C', data: ['CJ', 'Ciri', 'Coco']},
+    {key: 'D', title: 'start D', data: ['Drive', 'DJ', 'Dva']},
+    {key: 'E', title: 'start E', data: ['Eami', 'Emi', 'Eali']},
+    {key: 'F', title: 'start F', data: ['Fat', 'Father', 'Foo']},
+    {key: 'G', title: 'start G', data: ['GJ', 'Google', 'Gli']},
+    {key: 'H', title: 'start H', data: ['Haster', 'Hill', 'Horse']},
+    {key: 'I', title: 'start I', data: ['Iri', 'Iyo', 'Illidan']},
+    {key: 'J', title: 'start J', data: ['John', 'Jean', 'Jorky']},
+    {key: 'K', title: 'start K', data: ['Kavin', 'Katlin', 'Kasadin']},
+    {key: 'L', title: 'start L', data: ['Lulu', 'Lock', 'Liva']},
+    {key: 'M', title: 'start M', data: ['Mali', 'Madive', 'Momo']},
+    {key: 'N', title: 'start N', data: ['No', 'Nori', 'Nin']},
+    {key: 'O', title: 'start O', data: ['Ori', 'Orstern', 'Ork']},
+    {key: 'P', title: 'start P', data: ['Predator', 'Pistol', 'Pather']},
+    {key: 'R', title: 'start R', data: ['Roro', 'Rudolf', 'Russ']},
+    {key: 'S', title: 'start S', data: ['Sun', 'Soso', 'Sami']},
+    {key: 'T', title: 'start T', data: ['Tooth', 'Tali', 'Tasadar']},
+    {key: 'U', title: 'start U', data: ['Umi', 'Urrr', 'Uggo']},
+    {key: 'V', title: 'start V', data: ['Vendeta', 'Vista', 'Vi']},
+    {key: 'W', title: 'start W', data: ['Woo', 'What', 'Wiwi']},
+    {key: 'X', title: 'start A', data: ['Xri', 'Xoxo', 'Xiexie']},
+    {key: 'Y', title: 'start A', data: ['Ymca', 'Yi', 'Yil']},
+    {key: 'Z', title: 'start A', data: ['Zoo', 'Zulzin', 'Ziho']},
+  ]);
   const sidebarRef = useRef<any>();
   const [isShow, setIsShow] = useState<boolean>(false);
   const [indicatorText, setIndicatorText] = useState<string>('');
@@ -116,15 +142,7 @@ const App = () => {
     return newData;
   };
 
-  useEffect(() => {
-    console.log('setDateWork');
-    const returnData = makeData(202);
-    setData(returnData);
-  }, []);
-
   const jumpToSection = (sectionIndex, itemIndex = 0) => {
-    // console.log('jumpToSection!! : ', sectionIndex, itemIndex);
-    // console.log('sectionListRef!! : ', sidebarRef);
     try {
       sidebarRef.current!.scrollToLocation({
         sectionIndex,
@@ -159,20 +177,16 @@ const App = () => {
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <SectionListSidebar
         ref={sidebarRef}
-        itemHeight={28}
-        sectionHeaderHeight={29.7}
+        itemHeight={30}
+        sectionHeaderHeight={30}
         stickySectionHeadersEnabled={true}
         sections={data}
         data={data}
-        // renderSectionHeader={({section}) => {
-        //   return <Text style={styles.header}>{section.title}</Text>;
-        // }}
         selectedText={indicatorText}
         isSelectedShow={isShow}
-        renderSidebarItem={renderSidebarItem}
         renderItem={({item}) => <RenderItem0 item={item} />}
       />
     </SafeAreaView>
