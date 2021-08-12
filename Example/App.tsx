@@ -11,11 +11,8 @@
 import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
-  FlatList,
-  Platform,
   Pressable,
   SafeAreaView,
-  SectionList,
   StatusBar,
   StyleSheet,
   Text,
@@ -104,6 +101,8 @@ const RenderItem0 = memo(RenderItem);
 const App = () => {
   const [data, setData] = useState<SimpleData[]>([]);
   const sidebarRef = useRef<any>();
+  const [isShow, setIsShow] = useState<boolean>(false);
+  const [indicatorText, setIndicatorText] = useState<string>('');
 
   const makeData: SimpleData[] = (num: number) => {
     var newData: SimpleData[] = [];
@@ -119,13 +118,13 @@ const App = () => {
 
   useEffect(() => {
     console.log('setDateWork');
-    const returnData = makeData(20);
+    const returnData = makeData(202);
     setData(returnData);
   }, []);
 
   const jumpToSection = (sectionIndex, itemIndex = 0) => {
-    console.log('jumpToSection!! : ', sectionIndex, itemIndex);
-    console.log('sectionListRef!! : ', sidebarRef);
+    // console.log('jumpToSection!! : ', sectionIndex, itemIndex);
+    // console.log('sectionListRef!! : ', sidebarRef);
     try {
       sidebarRef.current!.scrollToLocation({
         sectionIndex,
@@ -138,8 +137,13 @@ const App = () => {
     return (
       <View key={item} style={{paddingVertical: 10}}>
         <Pressable
-          onPress={() => {
+          onPressIn={() => {
             jumpToSection(index);
+            setIndicatorText(index);
+            setIsShow(true);
+          }}
+          onPressOut={() => {
+            setIsShow(false);
           }}
           style={[styles.sidebarBtn]}>
           <Text
@@ -159,13 +163,15 @@ const App = () => {
       <SectionListSidebar
         ref={sidebarRef}
         itemHeight={28}
-        sectionHeaderHeight={28}
+        sectionHeaderHeight={29.7}
         stickySectionHeadersEnabled={true}
         sections={data}
         data={data}
         // renderSectionHeader={({section}) => {
         //   return <Text style={styles.header}>{section.title}</Text>;
         // }}
+        selectedText={indicatorText}
+        isSelectedShow={isShow}
         renderSidebarItem={renderSidebarItem}
         renderItem={({item}) => <RenderItem0 item={item} />}
       />
