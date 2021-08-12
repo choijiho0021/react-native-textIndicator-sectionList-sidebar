@@ -194,7 +194,7 @@ const SectionListSidebar = (
     [jumpToSection, sidebarItemStyle, sidebarItemTextStyle],
   );
 
-  const sidebarKeyExtractor = ({item}: any) => item;
+  const sidebarKeyExtractor = (item: any) => item;
 
   return (
     <View style={[styles.container, containerStyle]}>

@@ -1,6 +1,5 @@
 import React, {forwardRef, memo, useCallback, useEffect, useState} from 'react';
 import {
-  Dimensions,
   FlatList,
   ListRenderItem,
   PixelRatio,
@@ -17,8 +16,6 @@ import {
 } from 'react-native';
 import SectionListGetItemLayout from 'react-native-section-list-get-item-layout';
 import TextIndicator from './TextIndicator';
-
-const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
@@ -73,15 +70,13 @@ interface SectionListDataType {
   data: Array<any>;
 }
 
-interface SectionListSidebarProps extends SectionListProps<any, any> {
+interface SectionListSidebarProps extends SectionListProps<any> {
   //general
   containerStyle?: StyleProp<ViewProps>;
   rtl?: boolean;
   //sectionList
   renderSectionHeader?:
-    | ((info: {
-        section: SectionListData<any, any>;
-      }) => React.ReactElement | null)
+    | ((info: {section: SectionListData<any>}) => React.ReactElement | null)
     | undefined;
   data: SectionListDataType[];
   sectionHeaderTextStyle?: StyleProp<TextProps>;
@@ -123,7 +118,7 @@ const SectionListSidebar = (
     isSelectedShow,
     ...props
   }: SectionListSidebarProps,
-  ref: React.LegacyRef<SectionList>,
+  ref: React.LegacyRef<SectionList<any>> | any,
 ) => {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [indicatorText, setIndicatorText] = useState<string>('');
@@ -133,7 +128,7 @@ const SectionListSidebar = (
     setIsShow(isSelectedShow ?? false);
   }, [selectedText, isSelectedShow]);
 
-  const sectionKeyExtract = (item, index) => {
+  const sectionKeyExtract = (item: any, index: any) => {
     return item + index;
   };
 
@@ -145,7 +140,7 @@ const SectionListSidebar = (
     listHeaderHeight: () => listHeaderHeight,
   });
 
-  const defaultSectionHeader = ({section}: SectionListData<any, any>) => (
+  const defaultSectionHeader: any = ({section}: SectionListData<any>) => (
     <Text style={[styles.sectionHeaderStyle, sectionHeaderStyle]}>
       {section.title}
     </Text>
@@ -154,7 +149,7 @@ const SectionListSidebar = (
   const jumpToSection = useCallback(
     (sectionIndex, itemIndex = 0) => {
       try {
-        ref!.current.scrollToLocation({
+        ref.current.scrollToLocation({
           sectionIndex,
           itemIndex,
         });
@@ -194,7 +189,7 @@ const SectionListSidebar = (
     [jumpToSection, sidebarItemStyle, sidebarItemTextStyle],
   );
 
-  const sidebarKeyExtractor = ({item}: any) => item;
+  const sidebarKeyExtractor = (item: any) => item;
 
   return (
     <View style={[styles.container, containerStyle]}>

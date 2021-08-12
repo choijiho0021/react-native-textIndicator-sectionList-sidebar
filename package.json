@@ -1,11 +1,13 @@
 {
-  "name": "faster-secion-list-sidebar",
-  "version": "0.0.1",
-  "main": "index.js",
+  "name": "react-native-textindicator-sectionlist-sidebar",
+  "version": "0.0.7",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "ts:build": "tsc",
     "ts:watch": "tsc --watch",
     "test": "jest",
+    "prepare": "rm -rf dist && tsc",
     "prepublish": "npm run ts:build"
   },
   "dependencies": {
@@ -14,9 +16,11 @@
   "devDependencies": {
     "@types/react": "16.9.17",
     "@types/react-native": "0.61.0",
+    "react": "^17.0.1",
+    "react-native": "^0.64.1",
     "typescript": "3.7.5"
   },
-  "description": "faster section list",
+  "description": "react-native-textindicator-sectionlist-sidebar",
   "keywords": [
     "SectionList",
     "sidebar",
@@ -25,5 +29,13 @@
     "react-native"
   ],
   "author": "choijiho0021@gmail.com",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/choijiho0021/faster-section-list-sidebar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/choijiho0021/faster-section-list-sidebar/issues"
+  },
+  "homepage": "https://github.com/choijiho0021/faster-section-list-sidebar#readme"
 }
