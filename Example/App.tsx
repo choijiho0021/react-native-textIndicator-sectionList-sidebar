@@ -88,7 +88,6 @@ interface SimpleData {
 }
 
 const RenderItem = ({item}) => {
-  console.log('renderItem : ', item);
   return (
     <View style={styles.item}>
       <Text style={styles.title}>{item}</Text>
@@ -122,9 +121,9 @@ const App = () => {
     {key: 'U', title: 'start U', data: ['Umi', 'Urrr', 'Uggo']},
     {key: 'V', title: 'start V', data: ['Vendeta', 'Vista', 'Vi']},
     {key: 'W', title: 'start W', data: ['Woo', 'What', 'Wiwi']},
-    {key: 'X', title: 'start A', data: ['Xri', 'Xoxo', 'Xiexie']},
-    {key: 'Y', title: 'start A', data: ['Ymca', 'Yi', 'Yil']},
-    {key: 'Z', title: 'start A', data: ['Zoo', 'Zulzin', 'Ziho']},
+    {key: 'X', title: 'start X', data: ['Xri', 'Xoxo', 'Xiexie']},
+    {key: 'Y', title: 'start Y', data: ['Ymca', 'Yi', 'Yil']},
+    {key: 'Z', title: 'start Z', data: ['Zoo', 'Zulzin', 'Ziho']},
   ]);
   const sidebarRef = useRef<any>();
   const [isShow, setIsShow] = useState<boolean>(false);

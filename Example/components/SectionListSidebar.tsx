@@ -1,8 +1,18 @@
-import React, {forwardRef, memo, useCallback, useEffect, useState} from 'react';
+import React, {
+  forwardRef,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Dimensions,
   FlatList,
+  GestureResponderEvent,
   ListRenderItem,
+  PanResponder,
   PixelRatio,
   SectionList,
   SectionListData,
@@ -44,17 +54,16 @@ const styles = StyleSheet.create({
   sidebarItemContainerStyle: {
     opacity: 0.8,
     position: 'absolute',
-    bottom: 0,
-    top: 20,
+    top: 30,
     right: 0,
     justifyContent: 'center',
-    backgroundColor: '#ccc',
+    //backgroundColor: '#ccc',
+    backgroundColor: 'red',
     borderRadius: 50,
     marginHorizontal: 12,
   },
   sidebarItemTextStyle: {
-    flex: 1,
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: 'bold',
     color: '#222',
     justifyContent: 'center',
@@ -127,6 +136,8 @@ const SectionListSidebar = (
 ) => {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [indicatorText, setIndicatorText] = useState<string>('');
+  const pageX = useRef<number>();
+  const pageY = useRef<number>();
 
   useEffect(() => {
     setIndicatorText(selectedText ?? '');
@@ -151,6 +162,25 @@ const SectionListSidebar = (
     </Text>
   );
 
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => false,
+        onStartShouldSetPanResponderCapture: () => false,
+        onMoveShouldSetPanResponder: (
+          event: GestureResponderEvent,
+          {dx, dy, x0, y0, vx, vy, moveX, moveY},
+        ) => {
+          console.log(event.nativeEvent.touches);
+          console.log('panResponder x, y : ', moveX, ',', moveY);
+          pageX.current = moveX;
+          pageY.current = moveY;
+          return false;
+        },
+      }),
+    [],
+  );
+
   const jumpToSection = useCallback(
     (sectionIndex, itemIndex = 0) => {
       try {
@@ -163,10 +193,25 @@ const SectionListSidebar = (
     [ref],
   );
 
+  const settingFirstLetter = (maxNum: number, item: any[]) => {
+    var result = item;
+    console.log('settingFirstLetterArray : ', item);
+    console.log('current item length : ', item.length);
+    var value = maxNum - item.length;
+    console.log('value : ', value);
+    if (maxNum > item.length) {
+      return item;
+    }
+
+    for (var i = 0; i < value; i++) {}
+
+    return result;
+  };
+
   const defaultSidebarItem = useCallback(
     ({item, index}) => {
       return (
-        <View key={item} style={{paddingVertical: 10}}>
+        <View key={item} style={{paddingVertical: 5}}>
           <TouchableOpacity
             pressRetentionOffset={{bottom: 5, left: 5, right: 5, top: 5}}
             onPressIn={() => {
@@ -179,13 +224,8 @@ const SectionListSidebar = (
             }}
             hitSlop={{bottom: 10, left: 10, right: 10, top: 10}}
             style={[styles.sidebarItemStyle, sidebarItemStyle]}>
-            <Text
-              style={[
-                styles.sidebarItemTextStyle,
-                sidebarItemTextStyle,
-                index % 2 === 1 && {fontSize: 5, fontWeight: '900'},
-              ]}>
-              {index % 2 ? '·' : item}
+            <Text style={[styles.sidebarItemTextStyle, sidebarItemTextStyle]}>
+              {item}
             </Text>
           </TouchableOpacity>
         </View>
@@ -207,14 +247,13 @@ const SectionListSidebar = (
           ref={ref}
           {...props}
         />
-        <View style={[styles.sidebarItemContainerStyle, sidebarContainerStyle]}>
-          <FlatList
-            data={data.map(item => item.key)}
-            scrollEnabled={false}
-            keyExtractor={sidebarKeyExtractor}
-            renderItem={renderSidebarItem || defaultSidebarItem}
-            showsVerticalScrollIndicator={false}
-          />
+        <View
+          style={[styles.sidebarItemContainerStyle, sidebarContainerStyle]}
+          {...panResponder.panHandlers}>
+          {settingFirstLetter(
+            25,
+            data.map(item => item.key),
+          ).map((item, index) => defaultSidebarItem({item, index}))}
         </View>
       </View>
     </View>

@@ -26,7 +26,8 @@
     "sidebar",
     "ios",
     "android",
-    "react-native"
+    "react-native",
+    "contacts"
   ],
   "author": "choijiho0021@gmail.com",
   "license": "MIT",
