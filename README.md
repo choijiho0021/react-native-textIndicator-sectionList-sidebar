@@ -1,4 +1,4 @@
-# react-native-textIndicator-sectionList-sidebar
+# react-native-textindicator-sectionlist-sidebar
 
 ![demo](https://user-images.githubusercontent.com/85142573/129147005-d9768276-1c33-46e3-aa52-a1b0a0e8733a.gif)
 
