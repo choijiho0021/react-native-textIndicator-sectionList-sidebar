@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import {
+  Animated,
   Dimensions,
   FlatList,
   GestureResponderEvent,
@@ -46,19 +47,18 @@ const styles = StyleSheet.create({
     height: 30,
     fontSize: 14,
     paddingLeft: 10,
-    backgroundColor: '#ddd',
+    backgroundColor: '#e5e5e5',
   },
   title: {
     fontSize: 14,
   },
   sidebarItemContainerStyle: {
-    opacity: 0.8,
+    opacity: 0.7,
     position: 'absolute',
     top: 30,
     right: 0,
     justifyContent: 'center',
-    //backgroundColor: '#ccc',
-    backgroundColor: 'red',
+    backgroundColor: '#e5e5e5',
     borderRadius: 50,
     marginHorizontal: 12,
   },
@@ -136,8 +136,8 @@ const SectionListSidebar = (
 ) => {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [indicatorText, setIndicatorText] = useState<string>('');
-  const pageX = useRef<number>();
-  const pageY = useRef<number>();
+  const [sidebarItemHeight, setSidebarItemHeight] = useState<number>(25);
+  const sidebarRef = useRef<View>();
 
   useEffect(() => {
     setIndicatorText(selectedText ?? '');
@@ -167,15 +167,29 @@ const SectionListSidebar = (
       PanResponder.create({
         onStartShouldSetPanResponder: () => false,
         onStartShouldSetPanResponderCapture: () => false,
-        onMoveShouldSetPanResponder: (
-          event: GestureResponderEvent,
-          {dx, dy, x0, y0, vx, vy, moveX, moveY},
-        ) => {
-          console.log(event.nativeEvent.touches);
-          console.log('panResponder x, y : ', moveX, ',', moveY);
-          pageX.current = moveX;
-          pageY.current = moveY;
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderGrant: () => {
+          setIsShow(true);
+        },
+        onPanResponderMove: (event, {dx, dy, x0, y0, vx, vy, moveX, moveY}) => {
+          sidebarRef.current?.measure((fx, fy, width, height, px, py) => {
+            var index = Math.floor((moveY - py) / sidebarItemHeight);
+            console.log('moveY - py : ', moveY - py);
+            console.log('data.length : ', data.length);
+            console.log('index : ', index);
+            if (0 <= index && index < data.length) {
+              setIndicatorText(data[index].key);
+              jumpToSection(index, 0);
+            }
+            try {
+            } catch (e) {
+              console.log('move Error : ', e);
+            }
+          });
           return false;
+        },
+        onPanResponderEnd: () => {
+          setIsShow(false);
         },
       }),
     [],
@@ -194,16 +208,8 @@ const SectionListSidebar = (
   );
 
   const settingFirstLetter = (maxNum: number, item: any[]) => {
+    // console.log('item : ', item);
     var result = item;
-    console.log('settingFirstLetterArray : ', item);
-    console.log('current item length : ', item.length);
-    var value = maxNum - item.length;
-    console.log('value : ', value);
-    if (maxNum > item.length) {
-      return item;
-    }
-
-    for (var i = 0; i < value; i++) {}
 
     return result;
   };
@@ -214,14 +220,6 @@ const SectionListSidebar = (
         <View key={item} style={{paddingVertical: 5}}>
           <TouchableOpacity
             pressRetentionOffset={{bottom: 5, left: 5, right: 5, top: 5}}
-            onPressIn={() => {
-              jumpToSection(index);
-              setIndicatorText(item);
-              setIsShow(true);
-            }}
-            onPressOut={() => {
-              setIsShow(false);
-            }}
             hitSlop={{bottom: 10, left: 10, right: 10, top: 10}}
             style={[styles.sidebarItemStyle, sidebarItemStyle]}>
             <Text style={[styles.sidebarItemTextStyle, sidebarItemTextStyle]}>
@@ -234,8 +232,6 @@ const SectionListSidebar = (
     [jumpToSection, sidebarItemStyle, sidebarItemTextStyle],
   );
 
-  const sidebarKeyExtractor = (item: any) => item;
-
   return (
     <View style={[styles.container, containerStyle]}>
       <TextIndicator isShow={isShow} text={indicatorText} />
@@ -247,14 +243,15 @@ const SectionListSidebar = (
           ref={ref}
           {...props}
         />
-        <View
+        <Animated.View
+          ref={sidebarRef}
           style={[styles.sidebarItemContainerStyle, sidebarContainerStyle]}
           {...panResponder.panHandlers}>
           {settingFirstLetter(
-            25,
+            data.length,
             data.map(item => item.key),
           ).map((item, index) => defaultSidebarItem({item, index}))}
-        </View>
+        </Animated.View>
       </View>
     </View>
   );
