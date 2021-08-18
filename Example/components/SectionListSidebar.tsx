@@ -128,7 +128,7 @@ const SectionListSidebar = (
     sidebarItemStyle,
     sidebarItemTextStyle,
     data,
-    selectedText,
+    selectedText = '',
     isSelectedShow,
     ...props
   }: SectionListSidebarProps,
@@ -154,11 +154,6 @@ const SectionListSidebar = (
 
     return result;
   };
-
-  useEffect(() => {
-    setIndicatorText(selectedText ?? '');
-    setIsShow(isSelectedShow ?? false);
-  }, [selectedText, isSelectedShow]);
 
   const sectionKeyExtract = (item, index) => {
     return item + index;
@@ -238,8 +233,6 @@ const SectionListSidebar = (
     },
     [jumpToSection, sidebarItemStyle, sidebarItemTextStyle],
   );
-
-  console.log('renderSidebarItem : ', renderSidebarItem);
 
   return (
     <View style={[styles.container, containerStyle]}>
