@@ -17,10 +17,7 @@ src
 .npmignore
 .prettierrc.js
 .watchmanconfig
-app.json
-App.tsx
 babel.config.js
 /index.js
 /metro.config.js
-/tsconfig.json
 yarn-error.log

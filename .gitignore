@@ -64,5 +64,3 @@ Develope
 dist
 /.prettierrc.js
 /.watchmanconfig
-/index.js
-/App.tsx
