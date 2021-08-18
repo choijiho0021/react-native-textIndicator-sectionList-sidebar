@@ -148,7 +148,7 @@ const App = () => {
         <Pressable
           onPressIn={() => {
             jumpToSection(index);
-            setIndicatorText(index);
+            setIndicatorText(item);
             setIsShow(true);
           }}
           onPressOut={() => {
@@ -178,6 +178,7 @@ const App = () => {
         data={data}
         selectedText={indicatorText}
         isSelectedShow={isShow}
+        renderSidebarItem={renderSidebarItem}
         renderItem={({item}) => <RenderItem0 item={item} />}
       />
     </SafeAreaView>

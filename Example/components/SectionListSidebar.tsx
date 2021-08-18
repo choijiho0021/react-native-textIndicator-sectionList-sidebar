@@ -239,6 +239,8 @@ const SectionListSidebar = (
     [jumpToSection, sidebarItemStyle, sidebarItemTextStyle],
   );
 
+  console.log('renderSidebarItem : ', renderSidebarItem);
+
   return (
     <View style={[styles.container, containerStyle]}>
       <TextIndicator isShow={isShow} text={indicatorText} />
@@ -257,7 +259,11 @@ const SectionListSidebar = (
           {settingFirstLetter(
             25,
             data.map(item => item.key),
-          ).map((item, index) => defaultSidebarItem({item, index}))}
+          ).map(
+            (item, index) =>
+              renderSidebarItem({item, index}) ||
+              defaultSidebarItem({item, index}),
+          )}
         </Animated.View>
       </View>
     </View>
