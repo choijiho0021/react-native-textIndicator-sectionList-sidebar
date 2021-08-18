@@ -1,11 +1,11 @@
-import React, {memo} from 'react';
-import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
+import React, { forwardRef, memo } from "react";
+import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 const styles = StyleSheet.create({
   center: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -16,9 +16,9 @@ const styles = StyleSheet.create({
     height: 60,
     opacity: 0.6,
     borderRadius: 10,
-    backgroundColor: '#eee',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#eee",
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     fontSize: 32,
@@ -31,9 +31,9 @@ interface TextIndicatorProps {
   text?: string;
 }
 
-const TextIndicator = ({isShow, style, text}: TextIndicatorProps) => {
+const TextIndicator = ({ isShow, style, text }: TextIndicatorProps) => {
   return isShow ? (
-    <View style={[styles.center, style, {zIndex: 9999}]} collapsable={false}>
+    <View style={[styles.center, style, { zIndex: 9999 }]} collapsable={false}>
       <View style={styles.box}>
         {isShow && <Text style={styles.content}>{text}</Text>}
       </View>

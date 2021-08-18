@@ -116,14 +116,6 @@ const App = () => {
     {key: 'O', title: 'start O', data: ['Ori', 'Orstern', 'Ork']},
     {key: 'P', title: 'start P', data: ['Predator', 'Pistol', 'Pather']},
     {key: 'R', title: 'start R', data: ['Roro', 'Rudolf', 'Russ']},
-    {key: 'S', title: 'start S', data: ['Sun', 'Soso', 'Sami']},
-    {key: 'T', title: 'start T', data: ['Tooth', 'Tali', 'Tasadar']},
-    {key: 'U', title: 'start U', data: ['Umi', 'Urrr', 'Uggo']},
-    {key: 'V', title: 'start V', data: ['Vendeta', 'Vista', 'Vi']},
-    {key: 'W', title: 'start W', data: ['Woo', 'What', 'Wiwi']},
-    {key: 'X', title: 'start X', data: ['Xri', 'Xoxo', 'Xiexie']},
-    {key: 'Y', title: 'start Y', data: ['Ymca', 'Yi', 'Yil']},
-    {key: 'Z', title: 'start Z', data: ['Zoo', 'Zulzin', 'Ziho']},
   ]);
   const sidebarRef = useRef<any>();
   const [isShow, setIsShow] = useState<boolean>(false);

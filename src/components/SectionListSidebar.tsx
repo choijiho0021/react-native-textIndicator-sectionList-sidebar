@@ -1,7 +1,19 @@
-import React, {forwardRef, memo, useCallback, useEffect, useState} from 'react';
+import React, {
+  forwardRef,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
+  Animated,
+  Dimensions,
   FlatList,
+  GestureResponderEvent,
   ListRenderItem,
+  PanResponder,
   PixelRatio,
   SectionList,
   SectionListData,
@@ -13,54 +25,54 @@ import {
   TouchableOpacity,
   View,
   ViewProps,
-} from 'react-native';
-import SectionListGetItemLayout from 'react-native-section-list-get-item-layout';
-import TextIndicator from './TextIndicator';
+} from "react-native";
+import SectionListGetItemLayout from "react-native-section-list-get-item-layout";
+import TextIndicator from "./TextIndicator";
+
+const windowHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   item: {
-    backgroundColor: '#f9c2ff',
+    backgroundColor: "#f9c2ff",
     padding: 3,
     marginVertical: 4,
   },
   sectionHeaderStyle: {
-    justifyContent: 'flex-end',
-    textAlignVertical: 'center',
+    justifyContent: "flex-end",
+    textAlignVertical: "center",
     padding: 5,
     height: 30,
     fontSize: 14,
     paddingLeft: 10,
-    backgroundColor: '#ddd',
+    backgroundColor: "#e5e5e5",
   },
   title: {
     fontSize: 14,
   },
   sidebarItemContainerStyle: {
-    opacity: 0.8,
-    position: 'absolute',
-    bottom: 0,
-    top: 20,
+    opacity: 0.7,
+    position: "absolute",
+    top: 30,
     right: 0,
-    justifyContent: 'center',
-    backgroundColor: '#ccc',
+    justifyContent: "center",
+    backgroundColor: "#e5e5e5",
     borderRadius: 50,
     marginHorizontal: 12,
   },
   sidebarItemTextStyle: {
-    flex: 1,
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: '#222',
-    justifyContent: 'center',
-    textAlignVertical: 'center',
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#222",
+    justifyContent: "center",
+    textAlignVertical: "center",
   },
   sidebarItemStyle: {
     paddingHorizontal: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
@@ -70,13 +82,15 @@ interface SectionListDataType {
   data: Array<any>;
 }
 
-interface SectionListSidebarProps extends SectionListProps<any> {
+interface SectionListSidebarProps extends SectionListProps<any, any> {
   //general
   containerStyle?: StyleProp<ViewProps>;
   rtl?: boolean;
   //sectionList
   renderSectionHeader?:
-    | ((info: {section: SectionListData<any>}) => React.ReactElement | null)
+    | ((info: {
+        section: SectionListData<any, any>;
+      }) => React.ReactElement | null)
     | undefined;
   data: SectionListDataType[];
   sectionHeaderTextStyle?: StyleProp<TextProps>;
@@ -118,17 +132,35 @@ const SectionListSidebar = (
     isSelectedShow,
     ...props
   }: SectionListSidebarProps,
-  ref: React.LegacyRef<SectionList<any>> | any,
+  ref: React.LegacyRef<SectionList>
 ) => {
   const [isShow, setIsShow] = useState<boolean>(false);
-  const [indicatorText, setIndicatorText] = useState<string>('');
+  const [indicatorText, setIndicatorText] = useState<string>("");
+  const [sidebarItemHeight, setSidebarItemHeight] = useState<number>(25);
+  const sidebarRef = useRef<View>();
+
+  const settingFirstLetter = (maxNum: number = 25, item: any[]) => {
+    var result = item;
+    var contraction = item.length - maxNum;
+
+    for (var i = 0; 0 < contraction && i < item.length; i++) {
+      if ((i + 1) % 2 === 0) {
+        if (contraction > 0) {
+          contraction--;
+          result.splice(i, 2, "·");
+        }
+      }
+    }
+
+    return result;
+  };
 
   useEffect(() => {
-    setIndicatorText(selectedText ?? '');
+    setIndicatorText(selectedText ?? "");
     setIsShow(isSelectedShow ?? false);
   }, [selectedText, isSelectedShow]);
 
-  const sectionKeyExtract = (item: any, index: any) => {
+  const sectionKeyExtract = (item, index) => {
     return item + index;
   };
 
@@ -140,61 +172,81 @@ const SectionListSidebar = (
     listHeaderHeight: () => listHeaderHeight,
   });
 
-  const defaultSectionHeader: any = ({section}: SectionListData<any>) => (
+  const defaultSectionHeader = ({ section }: SectionListData<any, any>) => (
     <Text style={[styles.sectionHeaderStyle, sectionHeaderStyle]}>
       {section.title}
     </Text>
   );
 
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => false,
+        onStartShouldSetPanResponderCapture: () => false,
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderGrant: () => {
+          setIsShow(true);
+        },
+        onPanResponderMove: (
+          event,
+          { dx, dy, x0, y0, vx, vy, moveX, moveY }
+        ) => {
+          sidebarRef.current?.measure((fx, fy, width, height, px, py) => {
+            var index = (index = Math.floor((moveY - py) / sidebarItemHeight));
+
+            if (0 <= index && index < data.length) {
+              setIndicatorText(data[index].key);
+              jumpToSection(index, 0);
+            }
+            try {
+            } catch (e) {
+              console.log("move Error : ", e);
+            }
+          });
+          return false;
+        },
+        onPanResponderEnd: () => {
+          setIsShow(false);
+        },
+      }),
+    []
+  );
+
   const jumpToSection = useCallback(
     (sectionIndex, itemIndex = 0) => {
       try {
-        ref.current.scrollToLocation({
+        ref!.current.scrollToLocation({
           sectionIndex,
           itemIndex,
         });
       } catch (e) {}
     },
-    [ref],
+    [ref]
   );
 
   const defaultSidebarItem = useCallback(
-    ({item, index}) => {
+    ({ item, index }) => {
       return (
-        <View key={item} style={{paddingVertical: 10}}>
+        <View key={data[index].key} style={{ paddingVertical: 5 }}>
           <TouchableOpacity
-            pressRetentionOffset={{bottom: 5, left: 5, right: 5, top: 5}}
-            onPressIn={() => {
-              jumpToSection(index);
-              setIndicatorText(item);
-              setIsShow(true);
-            }}
-            onPressOut={() => {
-              setIsShow(false);
-            }}
-            hitSlop={{bottom: 10, left: 10, right: 10, top: 10}}
-            style={[styles.sidebarItemStyle, sidebarItemStyle]}>
-            <Text
-              style={[
-                styles.sidebarItemTextStyle,
-                sidebarItemTextStyle,
-                index % 2 === 1 && {fontSize: 5, fontWeight: '900'},
-              ]}>
-              {index % 2 ? '·' : item}
+            pressRetentionOffset={{ bottom: 5, left: 5, right: 5, top: 5 }}
+            hitSlop={{ bottom: 10, left: 10, right: 10, top: 10 }}
+            style={[styles.sidebarItemStyle, sidebarItemStyle]}
+          >
+            <Text style={[styles.sidebarItemTextStyle, sidebarItemTextStyle]}>
+              {item}
             </Text>
           </TouchableOpacity>
         </View>
       );
     },
-    [jumpToSection, sidebarItemStyle, sidebarItemTextStyle],
+    [jumpToSection, sidebarItemStyle, sidebarItemTextStyle]
   );
-
-  const sidebarKeyExtractor = (item: any) => item;
 
   return (
     <View style={[styles.container, containerStyle]}>
       <TextIndicator isShow={isShow} text={indicatorText} />
-      <View style={{flexDirection: rtl === true ? 'row-reverse' : 'row'}}>
+      <View style={{ flexDirection: rtl === true ? "row-reverse" : "row" }}>
         <SectionList
           keyExtractor={sectionKeyExtract}
           getItemLayout={getItemLayout}
@@ -202,15 +254,16 @@ const SectionListSidebar = (
           ref={ref}
           {...props}
         />
-        <View style={[styles.sidebarItemContainerStyle, sidebarContainerStyle]}>
-          <FlatList
-            data={data.map(item => item.key)}
-            scrollEnabled={false}
-            keyExtractor={sidebarKeyExtractor}
-            renderItem={renderSidebarItem || defaultSidebarItem}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
+        <Animated.View
+          ref={sidebarRef}
+          style={[styles.sidebarItemContainerStyle, sidebarContainerStyle]}
+          {...panResponder.panHandlers}
+        >
+          {settingFirstLetter(
+            25,
+            data.map((item) => item.key)
+          ).map((item, index) => defaultSidebarItem({ item, index }))}
+        </Animated.View>
       </View>
     </View>
   );
