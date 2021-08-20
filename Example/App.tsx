@@ -99,23 +99,29 @@ const RenderItem0 = memo(RenderItem);
 
 const App = () => {
   const [data, setData] = useState<SimpleData[]>([
+    {
+      key: 'ㄴ',
+      title: 'start ㄴ',
+      data: ['Amy', 'Ari', 'Abundon', 'Ari', 'Abundon', 'Ari', 'Abundon'],
+    },
+    {
+      key: 'ㄹ',
+      title: 'start ㄹ',
+      data: ['Amy', 'Ari', 'Abundon', 'Ari', 'Abundon', 'Ari', 'Abundon'],
+    },
+    {key: 'ㅊ', title: 'start ㅊ', data: ['Iri', 'Iyo', 'Illidan']},
+    {key: 'ㅋ', title: 'start ㅋ', data: ['John', 'Jean', 'Jorky']},
+    {key: 'ㅌ', title: 'start ㅌ', data: ['Kavin', 'Katlin', 'Kasadin']},
+    {key: 'ㅍ', title: 'start ㅍ', data: ['Lulu', 'Lock', 'Liva']},
+    {key: 'ㅎ', title: 'start ㅎ', data: ['Mali', 'Madive', 'Momo']},
     {key: 'A', title: 'start A', data: ['Amy', 'Ari', 'Abundon']},
-    {key: 'B', title: 'start B', data: ['BY', 'Briri', 'BatMan']},
-    {key: 'C', title: 'start C', data: ['CJ', 'Ciri', 'Coco']},
-    {key: 'D', title: 'start D', data: ['Drive', 'DJ', 'Dva']},
-    {key: 'E', title: 'start E', data: ['Eami', 'Emi', 'Eali']},
+    {key: 'B', title: 'start B', data: ['Amy', 'Ari', 'Abundon']},
+    {key: 'C', title: 'start C', data: ['Amy', 'Ari', 'Abundon']},
+    {key: 'D', title: 'start D', data: ['Amy', 'Ari', 'Abundon']},
     {key: 'F', title: 'start F', data: ['Fat', 'Father', 'Foo']},
-    {key: 'G', title: 'start G', data: ['GJ', 'Google', 'Gli']},
-    {key: 'H', title: 'start H', data: ['Haster', 'Hill', 'Horse']},
-    {key: 'I', title: 'start I', data: ['Iri', 'Iyo', 'Illidan']},
-    {key: 'J', title: 'start J', data: ['John', 'Jean', 'Jorky']},
-    {key: 'K', title: 'start K', data: ['Kavin', 'Katlin', 'Kasadin']},
-    {key: 'L', title: 'start L', data: ['Lulu', 'Lock', 'Liva']},
-    {key: 'M', title: 'start M', data: ['Mali', 'Madive', 'Momo']},
-    {key: 'N', title: 'start N', data: ['No', 'Nori', 'Nin']},
     {key: 'O', title: 'start O', data: ['Ori', 'Orstern', 'Ork']},
-    {key: 'P', title: 'start P', data: ['Predator', 'Pistol', 'Pather']},
-    {key: 'R', title: 'start R', data: ['Roro', 'Rudolf', 'Russ']},
+    {key: 'P', title: 'start P', data: ['Amy', 'Ari', 'Abundon']},
+    {key: 'Q', title: 'start Q', data: ['Amy', 'Ari', 'Abundon']},
   ]);
   const sidebarRef = useRef<any>();
   const [isShow, setIsShow] = useState<boolean>(false);
@@ -178,7 +184,6 @@ const App = () => {
         data={data}
         selectedText={indicatorText}
         isSelectedShow={isShow}
-        renderSidebarItem={renderSidebarItem}
         renderItem={({item}) => <RenderItem0 item={item} />}
       />
     </SafeAreaView>

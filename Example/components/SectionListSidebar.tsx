@@ -2,7 +2,6 @@ import React, {
   forwardRef,
   memo,
   useCallback,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -10,8 +9,6 @@ import React, {
 import {
   Animated,
   Dimensions,
-  FlatList,
-  GestureResponderEvent,
   ListRenderItem,
   PanResponder,
   PixelRatio,
@@ -28,8 +25,6 @@ import {
 } from 'react-native';
 import SectionListGetItemLayout from 'react-native-section-list-get-item-layout';
 import TextIndicator from './TextIndicator';
-
-const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
@@ -55,7 +50,7 @@ const styles = StyleSheet.create({
   sidebarItemContainerStyle: {
     opacity: 0.7,
     position: 'absolute',
-    top: 30,
+    top: 0,
     right: 0,
     justifyContent: 'center',
     backgroundColor: '#e5e5e5',
@@ -75,6 +70,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const windowHeight = Dimensions.get('window').height;
 
 interface SectionListDataType {
   key: string;
@@ -110,6 +107,14 @@ interface SectionListSidebarProps extends SectionListProps<any, any> {
   sidebarItemTextStyle?: StyleProp<TextProps>;
   selectedText?: string;
   isSelectedShow?: boolean;
+  maxSidebarText?: number;
+  sidebarItemHeight?: number;
+}
+
+interface DataType {
+  key: string;
+  title: string;
+  data: any[];
 }
 
 const SectionListSidebar = (
@@ -130,27 +135,49 @@ const SectionListSidebar = (
     data,
     selectedText = '',
     isSelectedShow,
+    maxSidebarText = 20,
+    sidebarItemHeight = 23,
     ...props
   }: SectionListSidebarProps,
   ref: React.LegacyRef<SectionList>,
 ) => {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [indicatorText, setIndicatorText] = useState<string>('');
-  const [sidebarItemHeight, setSidebarItemHeight] = useState<number>(25);
   const sidebarRef = useRef<View>();
+  const contraction = useRef<number>(
+    data.length - maxSidebarText < 0 ? 0 : data.length - maxSidebarText,
+  );
+  const input = useRef<any[]>(['ㄱ', 'ㄴ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ']);
+  const output = useRef<any[]>([0, 1, 2, 2, 3, 4, 5, 6]);
 
-  const settingFirstLetter = (maxNum: number = 25, item: any[]) => {
+  const isNumber = elm => {
+    return !isNaN(elm);
+  };
+
+  const [defaultSidebarData, setDefaultSidebarData] = useState<any[]>([
+    {key: 'ㄱ'},
+    {key: 'ㄴ'},
+    {key: 'ㄷ'},
+    {key: 'ㄹ'},
+    {key: 'ㅁ'},
+    {key: 'ㅂ'},
+    {key: 'ㅅ'},
+    {key: 'ㅇ'},
+    {key: 'ㅈ'},
+    {key: 'ㅊ'},
+    {key: 'ㅋ'},
+    {key: 'ㅌ'},
+    {key: 'ㅍ'},
+    {key: 'ㅎ'},
+    {key: 'A'},
+    {key: 'F'},
+    {key: 'O'},
+    {key: 'Z'},
+    {key: '#'},
+  ]);
+
+  const settingFirstLetter = (item: any[]) => {
     var result = item;
-    var contraction = item.length - maxNum;
-
-    for (var i = 0; 0 < contraction && i < item.length; i++) {
-      if ((i + 1) % 2 === 0) {
-        if (contraction > 0) {
-          contraction--;
-          result.splice(i, 2, '·');
-        }
-      }
-    }
 
     return result;
   };
@@ -173,36 +200,62 @@ const SectionListSidebar = (
     </Text>
   );
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => false,
-        onStartShouldSetPanResponderCapture: () => false,
-        onMoveShouldSetPanResponder: () => true,
-        onPanResponderGrant: () => {
-          setIsShow(true);
-        },
-        onPanResponderMove: (event, {dx, dy, x0, y0, vx, vy, moveX, moveY}) => {
-          sidebarRef.current?.measure((fx, fy, width, height, px, py) => {
-            var index = (index = Math.floor((moveY - py) / sidebarItemHeight));
+  const setTargetIndexList = (input: string[]) => {
+    const targetIndexList = defaultSidebarData
+      .map(item => input.indexOf(item.key))
+      .reverse()
+      .map((item, index, array) => {
+        if (item === -1) {
+          array[index] = array[index - 1];
+          return array[index - 1] ?? array[index + 1];
+        } else {
+          return item;
+        }
+      })
+      .reverse();
 
-            if (0 <= index && index < data.length) {
-              setIndicatorText(data[index].key);
-              jumpToSection(index, 0);
-            }
-            try {
-            } catch (e) {
-              console.log('move Error : ', e);
-            }
-          });
-          return false;
-        },
-        onPanResponderEnd: () => {
-          setIsShow(false);
-        },
-      }),
-    [],
-  );
+    targetIndexList.splice(
+      targetIndexList.length - 1,
+      targetIndexList.length,
+      targetIndexList.indexOf(targetIndexList.findIndex(isNumber)) === 0
+        ? targetIndexList.length
+        : targetIndexList.findIndex(isNumber),
+    );
+
+    return targetIndexList;
+  };
+
+  const panResponder = useMemo(() => {
+    var index = 0;
+    const targetList = setTargetIndexList(data.map(item => item.key));
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onStartShouldSetPanResponderCapture: () => false,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        setIsShow(true);
+      },
+      onPanResponderMove: (event, {dx, dy, x0, y0, vx, vy, moveX, moveY}) => {
+        sidebarRef.current?.measure((fx, fy, width, height, px, py) => {
+          index = Math.floor((moveY - py) / sidebarItemHeight);
+
+          if (0 <= index && index < defaultSidebarData.length) {
+            setIndicatorText(defaultSidebarData[index].key);
+            console.log('targetList : ', targetList[index], targetList);
+            jumpToSection(targetList[index], 0);
+          }
+          try {
+          } catch (e) {
+            console.log('move Error : ', e);
+          }
+        });
+        return false;
+      },
+      onPanResponderEnd: () => {
+        setIsShow(false);
+      },
+    });
+  }, []);
 
   const jumpToSection = useCallback(
     (sectionIndex, itemIndex = 0) => {
@@ -219,7 +272,7 @@ const SectionListSidebar = (
   const defaultSidebarItem = useCallback(
     ({item, index}) => {
       return (
-        <View key={data[index].key} style={{paddingVertical: 5}}>
+        <View key={item} style={{paddingVertical: 5}}>
           <TouchableOpacity
             pressRetentionOffset={{bottom: 5, left: 5, right: 5, top: 5}}
             hitSlop={{bottom: 10, left: 10, right: 10, top: 10}}
@@ -247,16 +300,19 @@ const SectionListSidebar = (
         />
         <Animated.View
           ref={sidebarRef}
-          style={[styles.sidebarItemContainerStyle, sidebarContainerStyle]}
+          style={[
+            styles.sidebarItemContainerStyle,
+            {maxHeight: windowHeight},
+            sidebarContainerStyle,
+          ]}
           {...panResponder.panHandlers}>
-          {settingFirstLetter(
-            25,
-            data.map(item => item.key),
-          ).map(
-            (item, index) =>
-              renderSidebarItem({item, index}) ||
-              defaultSidebarItem({item, index}),
-          )}
+          {defaultSidebarData
+            .map(item => item.key)
+            .map((item, index) =>
+              renderSidebarItem === undefined
+                ? defaultSidebarItem({item, index})
+                : renderSidebarItem({item, index}),
+            )}
         </Animated.View>
       </View>
     </View>
