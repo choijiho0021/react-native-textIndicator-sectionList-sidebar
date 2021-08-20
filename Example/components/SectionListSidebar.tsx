@@ -147,8 +147,10 @@ const SectionListSidebar = (
   const contraction = useRef<number>(
     data.length - maxSidebarText < 0 ? 0 : data.length - maxSidebarText,
   );
-  const input = useRef<any[]>(['ㄱ', 'ㄴ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ']);
-  const output = useRef<any[]>([0, 1, 2, 2, 3, 4, 5, 6]);
+  const input = useRef<any[]>(['ㄴ', 'ㄷ', 'ㅁ', 'A', 'B']);
+  const output = useRef<any[]>([
+    0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 11, 12, 12,
+  ]);
 
   const isNumber = elm => {
     return !isNaN(elm);
@@ -203,24 +205,18 @@ const SectionListSidebar = (
   const setTargetIndexList = (input: string[]) => {
     const targetIndexList = defaultSidebarData
       .map(item => input.indexOf(item.key))
-      .reverse()
       .map((item, index, array) => {
         if (item === -1) {
-          array[index] = array[index - 1];
-          return array[index - 1] ?? array[index + 1];
-        } else {
-          return item;
+          for (var i = index; i <= array.length; i++) {
+            if (array[i] === undefined) continue;
+            if (array[i] !== -1) {
+              return array[i];
+            }
+          }
+          return input.length;
         }
-      })
-      .reverse();
-
-    targetIndexList.splice(
-      targetIndexList.length - 1,
-      targetIndexList.length,
-      targetIndexList.indexOf(targetIndexList.findIndex(isNumber)) === 0
-        ? targetIndexList.length
-        : targetIndexList.findIndex(isNumber),
-    );
+        return item;
+      });
 
     return targetIndexList;
   };
@@ -241,7 +237,6 @@ const SectionListSidebar = (
 
           if (0 <= index && index < defaultSidebarData.length) {
             setIndicatorText(defaultSidebarData[index].key);
-            console.log('targetList : ', targetList[index], targetList);
             jumpToSection(targetList[index], 0);
           }
           try {
@@ -296,6 +291,7 @@ const SectionListSidebar = (
           getItemLayout={getItemLayout}
           renderSectionHeader={renderSectionHeader || defaultSectionHeader}
           ref={ref}
+          sections={data}
           {...props}
         />
         <Animated.View
