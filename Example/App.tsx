@@ -185,6 +185,7 @@ const App = () => {
         selectedText={indicatorText}
         isSelectedShow={isShow}
         renderItem={({item}) => <RenderItem0 item={item} />}
+        locale={'kor'}
       />
     </SafeAreaView>
   );

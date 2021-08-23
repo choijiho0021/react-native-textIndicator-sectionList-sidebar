@@ -1,13 +1,12 @@
 {
   "name": "react-native-textindicator-sectionlist-sidebar",
-  "version": "0.0.12",
+  "version": "0.0.14",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "ts:build": "tsc",
     "ts:watch": "tsc --watch",
     "test": "jest",
-    "prepare": "rm -rf dist && tsc",
     "prepublish": "npm run ts:build"
   },
   "dependencies": {

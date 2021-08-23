@@ -1,4 +1,4 @@
-import React, { forwardRef, memo } from "react";
+import React, { memo } from "react";
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 const styles = StyleSheet.create({

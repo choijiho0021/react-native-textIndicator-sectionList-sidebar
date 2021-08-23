@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import {
   Animated,
-  Dimensions,
+  Easing,
   ListRenderItem,
   PanResponder,
   PixelRatio,
@@ -30,11 +30,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  item: {
-    backgroundColor: '#f9c2ff',
-    padding: 3,
-    marginVertical: 4,
-  },
   sectionHeaderStyle: {
     justifyContent: 'flex-end',
     textAlignVertical: 'center',
@@ -44,18 +39,15 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     backgroundColor: '#e5e5e5',
   },
-  title: {
-    fontSize: 14,
-  },
   sidebarItemContainerStyle: {
-    opacity: 0.7,
     position: 'absolute',
-    top: 0,
+    top: '2%',
     right: 0,
     justifyContent: 'center',
     backgroundColor: '#e5e5e5',
     borderRadius: 50,
     marginHorizontal: 12,
+    paddingTop: 10,
   },
   sidebarItemTextStyle: {
     fontSize: 12,
@@ -71,8 +63,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const windowHeight = Dimensions.get('window').height;
-
 interface SectionListDataType {
   key: string;
   title: string;
@@ -83,6 +73,8 @@ interface SectionListSidebarProps extends SectionListProps<any, any> {
   //general
   containerStyle?: StyleProp<ViewProps>;
   rtl?: boolean;
+  locale?: 'kor' | 'en';
+
   //sectionList
   renderSectionHeader?:
     | ((info: {
@@ -111,15 +103,14 @@ interface SectionListSidebarProps extends SectionListProps<any, any> {
   sidebarItemHeight?: number;
 }
 
-interface DataType {
-  key: string;
-  title: string;
-  data: any[];
-}
+const fadeInDuration = 200;
+const fadeOutDuration = 200;
+const duration = 1000;
 
 const SectionListSidebar = (
   {
     rtl = false,
+    locale = 'en',
     sectionHeaderHeight = 30,
     itemHeight = 30,
     footerHeaderHeight = 0,
@@ -136,7 +127,6 @@ const SectionListSidebar = (
     selectedText = '',
     isSelectedShow,
     maxSidebarText = 20,
-    sidebarItemHeight = 23,
     ...props
   }: SectionListSidebarProps,
   ref: React.LegacyRef<SectionList>,
@@ -144,45 +134,99 @@ const SectionListSidebar = (
   const [isShow, setIsShow] = useState<boolean>(false);
   const [indicatorText, setIndicatorText] = useState<string>('');
   const sidebarRef = useRef<View>();
-  const contraction = useRef<number>(
-    data.length - maxSidebarText < 0 ? 0 : data.length - maxSidebarText,
+  const [visibleSidebar, setVisibleSidebar] = useState<boolean>(false);
+  const [sidebarItemHeight, setSidebarItemHeight] = useState<number>(0);
+  const timerRef = useRef<NodeJS.Timeout>();
+  const sidebarOpacity = useRef(new Animated.Value(0)).current;
+  const [defaultSidebarData, setDefaultSidebarData] = useState<any[]>(
+    locale === 'kor'
+      ? [
+          {key: 'ㄱ'},
+          {key: 'ㄴ'},
+          {key: 'ㄷ'},
+          {key: 'ㄹ'},
+          {key: 'ㅁ'},
+          {key: 'ㅂ'},
+          {key: 'ㅅ'},
+          {key: 'ㅇ'},
+          {key: 'ㅈ'},
+          {key: 'ㅊ'},
+          {key: 'ㅋ'},
+          {key: 'ㅌ'},
+          {key: 'ㅍ'},
+          {key: 'ㅎ'},
+          {key: 'A'},
+          {key: 'F'},
+          {key: 'O'},
+          {key: 'Z'},
+          {key: '#'},
+        ]
+      : [
+          {key: 'A'},
+          {key: 'B'},
+          {key: 'C'},
+          {key: 'D'},
+          {key: 'E'},
+          {key: 'F'},
+          {key: 'G'},
+          {key: 'H'},
+          {key: 'I'},
+          {key: 'J'},
+          {key: 'K'},
+          {key: 'L'},
+          {key: 'M'},
+          {key: 'N'},
+          {key: 'O'},
+          {key: 'P'},
+          {key: 'Q'},
+          {key: 'R'},
+          {key: 'S'},
+          {key: 'T'},
+          {key: 'U'},
+          {key: 'V'},
+          {key: 'W'},
+          {key: 'X'},
+          {key: 'Y'},
+          {key: 'Z'},
+          {key: '#'},
+        ],
   );
-  const input = useRef<any[]>(['ㄴ', 'ㄷ', 'ㅁ', 'A', 'B']);
-  const output = useRef<any[]>([
-    0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 11, 12, 12,
-  ]);
 
-  const isNumber = elm => {
-    return !isNaN(elm);
-  };
+  const onLayout = useCallback(
+    event => {
+      const {height} = event.nativeEvent.layout;
+      setSidebarItemHeight(height * (0.95 / defaultSidebarData.length));
+    },
+    [defaultSidebarData],
+  );
 
-  const [defaultSidebarData, setDefaultSidebarData] = useState<any[]>([
-    {key: 'ㄱ'},
-    {key: 'ㄴ'},
-    {key: 'ㄷ'},
-    {key: 'ㄹ'},
-    {key: 'ㅁ'},
-    {key: 'ㅂ'},
-    {key: 'ㅅ'},
-    {key: 'ㅇ'},
-    {key: 'ㅈ'},
-    {key: 'ㅊ'},
-    {key: 'ㅋ'},
-    {key: 'ㅌ'},
-    {key: 'ㅍ'},
-    {key: 'ㅎ'},
-    {key: 'A'},
-    {key: 'F'},
-    {key: 'O'},
-    {key: 'Z'},
-    {key: '#'},
-  ]);
+  const close = useCallback(() => {
+    Animated.timing(sidebarOpacity, {
+      delay: 0,
+      toValue: 0,
+      easing: Easing.out(Easing.ease),
+      duration: fadeOutDuration,
+      useNativeDriver: false,
+    }).start(() => {
+      setVisibleSidebar(false);
+    });
+  }, [sidebarOpacity]);
 
-  const settingFirstLetter = (item: any[]) => {
-    var result = item;
-
-    return result;
-  };
+  const show = useCallback(() => {
+    setVisibleSidebar(true);
+    Animated.timing(sidebarOpacity, {
+      delay: 0,
+      toValue: 0.7,
+      easing: Easing.out(Easing.ease),
+      duration: fadeInDuration,
+      useNativeDriver: false,
+    }).start(() => {
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        close();
+      }, duration);
+    });
+  }, [sidebarOpacity]);
 
   const sectionKeyExtract = (item, index) => {
     return item + index;
@@ -225,13 +269,13 @@ const SectionListSidebar = (
     var index = 0;
     const targetList = setTargetIndexList(data.map(item => item.key));
     return PanResponder.create({
-      onStartShouldSetPanResponder: () => false,
-      onStartShouldSetPanResponderCapture: () => false,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
         setIsShow(true);
       },
       onPanResponderMove: (event, {dx, dy, x0, y0, vx, vy, moveX, moveY}) => {
+        show();
+
         sidebarRef.current?.measure((fx, fy, width, height, px, py) => {
           index = Math.floor((moveY - py) / sidebarItemHeight);
 
@@ -250,7 +294,7 @@ const SectionListSidebar = (
         setIsShow(false);
       },
     });
-  }, []);
+  }, [sidebarItemHeight]);
 
   const jumpToSection = useCallback(
     (sectionIndex, itemIndex = 0) => {
@@ -264,31 +308,42 @@ const SectionListSidebar = (
     [ref],
   );
 
-  const defaultSidebarItem = useCallback(
+  const renderDefaultSidebarItem = useCallback(
     ({item, index}) => {
       return (
-        <View key={item} style={{paddingVertical: 5}}>
+        <View key={item}>
           <TouchableOpacity
             pressRetentionOffset={{bottom: 5, left: 5, right: 5, top: 5}}
             hitSlop={{bottom: 10, left: 10, right: 10, top: 10}}
             style={[styles.sidebarItemStyle, sidebarItemStyle]}>
-            <Text style={[styles.sidebarItemTextStyle, sidebarItemTextStyle]}>
+            <Text
+              style={[
+                styles.sidebarItemTextStyle,
+                sidebarItemTextStyle,
+                {
+                  height: sidebarItemHeight,
+                },
+              ]}>
               {item}
             </Text>
           </TouchableOpacity>
         </View>
       );
     },
-    [jumpToSection, sidebarItemStyle, sidebarItemTextStyle],
+    [jumpToSection, sidebarItemStyle, sidebarItemTextStyle, sidebarItemHeight],
   );
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={[styles.container, containerStyle]} onLayout={onLayout}>
       <TextIndicator isShow={isShow} text={indicatorText} />
       <View style={{flexDirection: rtl === true ? 'row-reverse' : 'row'}}>
         <SectionList
           keyExtractor={sectionKeyExtract}
           getItemLayout={getItemLayout}
+          onScroll={() => {
+            show();
+            setVisibleSidebar(true);
+          }}
           renderSectionHeader={renderSectionHeader || defaultSectionHeader}
           ref={ref}
           sections={data}
@@ -298,17 +353,18 @@ const SectionListSidebar = (
           ref={sidebarRef}
           style={[
             styles.sidebarItemContainerStyle,
-            {maxHeight: windowHeight},
             sidebarContainerStyle,
+            {opacity: sidebarOpacity},
           ]}
           {...panResponder.panHandlers}>
-          {defaultSidebarData
-            .map(item => item.key)
-            .map((item, index) =>
-              renderSidebarItem === undefined
-                ? defaultSidebarItem({item, index})
-                : renderSidebarItem({item, index}),
-            )}
+          {visibleSidebar &&
+            defaultSidebarData
+              .map(item => item.key)
+              .map((item, index) =>
+                renderSidebarItem === undefined
+                  ? renderDefaultSidebarItem({item, index})
+                  : renderSidebarItem({item, index}),
+              )}
         </Animated.View>
       </View>
     </View>
