@@ -1,8 +1,7 @@
 # Warn - Work Progress!
 
 # react-native-textindicator-sectionlist-sidebar
-
-![demo](https://user-images.githubusercontent.com/85142573/129147005-d9768276-1c33-46e3-aa52-a1b0a0e8733a.gif)
+![Aug-24-2021 17-58-14](https://user-images.githubusercontent.com/85142573/130588405-2cd3970b-f5ac-47ac-a405-aac1f3acdc7e.gif)
 
 react-navtive-textIndicator-sectionList-sidebar is a simple sectionList With sidebar and textIndicator for iOS and Android.
 
