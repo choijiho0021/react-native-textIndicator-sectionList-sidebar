@@ -1,5 +1,3 @@
-# Warn - Work Progress!
-
 # react-native-textindicator-sectionlist-sidebar
 ![Aug-24-2021 17-58-14](https://user-images.githubusercontent.com/85142573/130588405-2cd3970b-f5ac-47ac-a405-aac1f3acdc7e.gif)
 
