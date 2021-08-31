@@ -1,6 +1,6 @@
 {
-  "name": "react-native-textindicator-sectionlist-sidebar",
-  "version": "0.0.14",
+  "name": "react-native-sectionlist-contact",
+  "version": "0.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -19,14 +19,19 @@
     "react-native": "^0.64.1",
     "typescript": "3.7.5"
   },
-  "description": "react-native-textindicator-sectionlist-sidebar",
+  "description": "react-native-sectionlist-contact is common sectionlist. it provide scrollToIndex with scrolling sidebar. and text will show you when you using scrollToIndex.",
   "keywords": [
     "SectionList",
     "sidebar",
     "ios",
     "android",
     "react-native",
-    "contacts"
+    "contacts",
+    "scrolling",
+    "scrollingbar",
+    "text",
+    "indicator",
+    "scrollToIndex"
   ],
   "author": "choijiho0021@gmail.com",
   "license": "MIT",

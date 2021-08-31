@@ -19,9 +19,11 @@ import {
   StyleSheet,
   Text,
   TextProps,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewProps,
+  ViewStyle,
 } from 'react-native';
 import SectionListGetItemLayout from 'react-native-section-list-get-item-layout';
 import TextIndicator from './TextIndicator';
@@ -71,7 +73,7 @@ interface SectionListDataType {
 
 interface SectionListSidebarProps extends SectionListProps<any, any> {
   //general
-  containerStyle?: StyleProp<ViewProps>;
+  containerStyle?: StyleProp<ViewStyle>;
   rtl?: boolean;
   locale?: 'kor' | 'en';
 
@@ -82,8 +84,8 @@ interface SectionListSidebarProps extends SectionListProps<any, any> {
       }) => React.ReactElement | null)
     | undefined;
   data: SectionListDataType[];
-  sectionHeaderTextStyle?: StyleProp<TextProps>;
-  sectionHeaderStyle?: StyleProp<ViewProps>;
+  sectionHeaderTextStyle?: StyleProp<TextStyle>;
+  sectionHeaderStyle?: StyleProp<ViewStyle>;
 
   //getItemList
   itemHeight?: number;
@@ -94,9 +96,9 @@ interface SectionListSidebarProps extends SectionListProps<any, any> {
 
   //sidebar
   renderSidebarItem?: ListRenderItem<string>;
-  sidebarContainerStyle?: StyleProp<ViewProps>;
-  sidebarItemStyle?: StyleProp<ViewProps>;
-  sidebarItemTextStyle?: StyleProp<TextProps>;
+  sidebarContainerStyle?: StyleProp<ViewStyle>;
+  sidebarItemStyle?: StyleProp<ViewStyle>;
+  sidebarItemTextStyle?: StyleProp<TextStyle>;
   selectedText?: string;
   isSelectedShow?: boolean;
   maxSidebarText?: number;

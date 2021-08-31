@@ -18,10 +18,10 @@ import {
   StyleProp,
   StyleSheet,
   Text,
-  TextProps,
+  TextStyle,
   TouchableOpacity,
   View,
-  ViewProps,
+  ViewStyle,
 } from "react-native";
 import SectionListGetItemLayout from "react-native-section-list-get-item-layout";
 import TextIndicator from "./TextIndicator";
@@ -37,14 +37,14 @@ const styles = StyleSheet.create({
     height: 30,
     fontSize: 14,
     paddingLeft: 10,
-    backgroundColor: "#e5e5e5",
+    backgroundColor: "#f5f5f5",
   },
   sidebarItemContainerStyle: {
     position: "absolute",
     top: "2%",
     right: 0,
     justifyContent: "center",
-    backgroundColor: "#e5e5e5",
+    backgroundColor: "#f5f5f5",
     borderRadius: 50,
     marginHorizontal: 12,
     paddingTop: 10,
@@ -68,10 +68,9 @@ interface SectionListDataType {
   title: string;
   data: Array<any>;
 }
-
 interface SectionListSidebarProps extends SectionListProps<any, any> {
   //general
-  containerStyle?: StyleProp<ViewProps>;
+  containerStyle?: StyleProp<ViewStyle>;
   rtl?: boolean;
   locale?: "kor" | "en";
 
@@ -82,10 +81,9 @@ interface SectionListSidebarProps extends SectionListProps<any, any> {
       }) => React.ReactElement | null)
     | undefined;
   data: SectionListDataType[];
-  sectionHeaderTextStyle?: StyleProp<TextProps>;
-  sectionHeaderStyle?: StyleProp<ViewProps>;
+  sectionHeaderTextStyle?: StyleProp<TextStyle>;
+  sectionHeaderStyle?: StyleProp<ViewStyle>;
 
-  //getItemList
   itemHeight?: number;
   sectionHeaderHeight?: number;
   footerHeaderHeight?: number;
@@ -94,9 +92,9 @@ interface SectionListSidebarProps extends SectionListProps<any, any> {
 
   //sidebar
   renderSidebarItem?: ListRenderItem<string>;
-  sidebarContainerStyle?: StyleProp<ViewProps>;
-  sidebarItemStyle?: StyleProp<ViewProps>;
-  sidebarItemTextStyle?: StyleProp<TextProps>;
+  sidebarContainerStyle?: StyleProp<ViewStyle>;
+  sidebarItemStyle?: StyleProp<ViewStyle>;
+  sidebarItemTextStyle?: StyleProp<TextStyle>;
   selectedText?: string;
   isSelectedShow?: boolean;
   maxSidebarText?: number;
