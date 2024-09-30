@@ -40,13 +40,13 @@ const styles = StyleSheet.create({
 		backgroundColor: '#f5f5f5',
 	},
 	sidebarItemContainerStyle: {
-		position: 'absolute',
-		top: '2%',
+		// position: "absolute",
+		// top: "2%",
 		right: 0,
 		justifyContent: 'center',
-		backgroundColor: '#f5f5f5',
-		borderRadius: 50,
-		marginHorizontal: 12,
+		//   backgroundColor: '#f5f5f5',
+		//   borderRadius: 50,
+		// marginHorizontal: 12,
 		paddingTop: 10,
 	},
 	sidebarItemTextStyle: {
@@ -364,21 +364,13 @@ const SectionListSidebar = (
 					//   show();
 					//   setVisibleSidebar(true);
 					// }}
+					showsVerticalScrollIndicator={false}
 					renderSectionHeader={renderSectionHeader || defaultSectionHeader}
 					ref={ref}
 					sections={data}
 					{...props}
 				/>
-				<View
-					style={{
-						width: 24,
-						borderRadius: 10,
-						borderWidth: 1,
-						borderColor: '#B7D8FF',
-						flexDirection: 'row',
-						alignItems: 'center',
-						//  alignSelf : 'center'
-					}}>
+				<View style={{width: 24, flexDirection: 'row', alignItems: 'center'}}>
 					<View style={{height: 520}}>
 						<Animated.View
 							ref={sidebarRef}
